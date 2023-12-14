@@ -84,7 +84,7 @@ const VerticalNavbar = () => {
   const user = useSelector((state) => state.currentUser);
   const data = [
     {link: '/dashboard/profile', label: 'Dashboard', icon: IconLayoutDashboard},
-    {link: user ? `/user/${user._id}/${user.profession}` : '/user/default',
+    {link: user ? `/user/${user._id}/${user.websiteStyle}` : '/user/default',
       label: 'Website', icon: IconWorldWww},
   ];
   // Shows icon only when the winodw size is less then 920px

@@ -59,7 +59,7 @@ const WelcomePage = () => {
       firstname: user?.firstName || '',
       lastName: user?.lastName || '',
       email: user?.email || '',
-      profession: user?.profession || '',
+      websiteStyle: user?.websiteStyle || '',
       bio: user?.bio || '',
       experience: user?.experience|| '',
       location: user?.location || '',
@@ -94,7 +94,7 @@ const WelcomePage = () => {
         firstName: values.firstname,
         lastName: values.lastName,
         email: values.email,
-        profession: values.profession,
+        websiteStyle: values.websiteStyle,
         bio: values.bio,
         experience: values.experience,
         location: values.location,
@@ -188,12 +188,12 @@ const WelcomePage = () => {
             style={{flex: 1}}
           />
           <NativeSelect
-            label="Profession"
-            name="profession"
+            label="Website Style"
+            name="websiteStyle"
             variant="filled"
-            {...form.getInputProps('profession')}
+            {...form.getInputProps('websiteStyle')}
             data={
-              ['Instructional Designer', 'UI/UX Designer', 'Graphics Designer']
+              ['style 1', 'style 2', 'style 3']
             }
             style={{flex: 1}}
           />
