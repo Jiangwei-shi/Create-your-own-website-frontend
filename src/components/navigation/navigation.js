@@ -43,7 +43,6 @@ const useStyles = createStyles((theme) => ({
     'padding': `${theme.spacing.xs} ${theme.spacing.sm}`,
     'borderRadius': theme.radius.sm,
     'fontWeight': 500,
-
     '&:hover': {
       // eslint-disable-next-line max-len
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -85,7 +84,7 @@ const VerticalNavbar = () => {
   const user = useSelector((state) => state.currentUser);
   const data = [
     {link: '/dashboard/profile', label: 'Dashboard', icon: IconLayoutDashboard},
-    {link: user ? `/user/${user._id}` : '/user/default',
+    {link: user ? `/user/${user._id}/${user.profession}` : '/user/default',
       label: 'Website', icon: IconWorldWww},
   ];
   // Shows icon only when the winodw size is less then 920px
@@ -130,7 +129,7 @@ const VerticalNavbar = () => {
     dispatch(logoutThunk())
         .then(() => {
           localStorage.removeItem('currentUser');
-          navigate('/login'); // 你的登录页面路由，这里假设它是/login
+          navigate('/login');
         });
   };
 
@@ -142,7 +141,7 @@ const VerticalNavbar = () => {
     if (confirmation) {
       dispatch(deleteUserThunk(userId))
           .then(() => {
-            navigate('/login'); // 你的登录页面路由，这里假设它是/login
+            navigate('/login');
           });
     }
   };
