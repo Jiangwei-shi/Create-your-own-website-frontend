@@ -37,7 +37,7 @@ function styleOne() {
 
       <audio autoPlay loop id="audios" preload="auto">
         <source
-          src="http://music.163.com/song/media/outer/url?id=526464145.mp3"/>
+          src="http://m701.music.126.net/20231215024458/62a1d7fa75b9b19b5d215432990ceb1c/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/22251250391/8f9c/05ed/9cb4/162ece8a56c5917e4dbecf2f7ad9eb97.mp3"/>
       </audio>
 
       {/* 在这里添加其他 JavaScript 或 Canvas 代码 */}
