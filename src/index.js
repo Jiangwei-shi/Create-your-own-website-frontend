@@ -13,6 +13,7 @@ import Login from './components/authorize/login';
 import Signup from './components/authorize/signup';
 import DashBoard from './components/index';
 import StyleOne from './components/pages/styleOne';
+import StyleTwo from './components/pages/styleTwo';
 import FourZeroFourPage from './components/FourZeroFourPage';
 import reportWebVitals from './reportWebVitals';
 
@@ -27,6 +28,8 @@ root.render(
             <Route path="/dashboard/*" element={<DashBoard/>} />
             <Route path="/user/:userId/style 1"
               element={<StyleOne/>} />
+            <Route path="/user/:userId/style 2"
+              element={<StyleTwo/>} />
             <Route path="/user/default" element={<FourZeroFourPage/>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

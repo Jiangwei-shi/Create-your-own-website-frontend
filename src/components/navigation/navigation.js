@@ -12,7 +12,7 @@ import {logoutThunk, deleteUserThunk} from '../../services/authorize-thunk';
 import {useDispatch} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import keelworksLogo from '../../icons/keelworksIcon.svg';
+import Logo from '../../icons/logo.jpg';
 
 const useStyles = createStyles((theme) => ({
 
@@ -150,7 +150,7 @@ const VerticalNavbar = () => {
     <Navbar p="md">
       <Navbar.Section grow>
         <Group className={classes.header} position="apart">
-          <Image src ={keelworksLogo} size={28}/>
+          <Image src ={Logo} size={28}/>
         </Group>
         {links}
       </Navbar.Section>

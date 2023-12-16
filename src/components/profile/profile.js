@@ -14,61 +14,63 @@ import {useForm} from '@mantine/form';
 import {Text} from '@mantine/core';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateUserThunk} from '../../services/authorize-thunk';
-import {IconBrandLinkedin, IconFileCv} from '@tabler/icons-react';
 import firebase from '../../firebaseConfig';
 import {getStorage, ref, uploadBytes, getDownloadURL} from 'firebase/storage';
 import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 const WelcomePage = () => {
-  const [avatar, setAvatar] = useState(null);
-  const [resume, setResume] = useState(null);
-  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [selfAvatar, setSelfAvatar] = useState(null);
+  const [coupleAvatar, setCoupleAvatar] = useState(null);
+  const [SelfViewerOpen, setSelfViewerOpen] = useState(false);
+  const [CoupleViewerOpen, setCoupleViewerOpen] = useState(false);
   const user = useSelector((state) => state.currentUser);
   const dispatch = useDispatch();
-  const handleAvatarChange = (e) => {
-    setAvatar(e);
-  };
-  const handleResumeChange = (e) => {
-    setResume(e);
+  const navigate = useNavigate();
+  const handleSelfAvatarChange = (e) => {
+    setSelfAvatar(e);
   };
 
-  const handleAvatarClick = () => {
-    setIsViewerOpen(true);
+  const handleCoupleAvatarChange = (e) => {
+    setCoupleAvatar(e);
+  };
+  const handleSelfAvatarClick= () => {
+    setSelfViewerOpen(true);
+  };
+  const handleCoupleAvatarClick = () => {
+    setCoupleViewerOpen(true);
   };
 
-  const uploadAvatar = async () => {
-    if (!avatar) return user.avatarUrl;
+  const uploadSelfAvatar = async () => {
+    if (!selfAvatar) return user.selfAvatarUrl;
     const storage = getStorage(firebase);
-    const storageRef = ref(storage, 'avatars/' + avatar.name);
-    await uploadBytes(storageRef, avatar);
+    const storageRef = ref(storage, 'avatars/' + selfAvatar.name);
+    await uploadBytes(storageRef, selfAvatar);
     return getDownloadURL(storageRef);
   };
 
-  const uploadResume = async () => {
-    if (!resume) return user.resumeUrl;
+
+  const uploadCoupleAvatar = async () => {
+    if (!coupleAvatar) return user.coupleAvatarUrl;
     const storage = getStorage(firebase);
-    const storageRef = ref(storage, 'resume/' + resume.name);
-    await uploadBytes(storageRef, resume);
+    const storageRef = ref(storage, 'avatars/' + coupleAvatar.name);
+    await uploadBytes(storageRef, coupleAvatar);
     return getDownloadURL(storageRef);
   };
 
   const form = useForm({
     initialValues: {
-      avatarUrl: user?.avatarUrl || 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69',
-      resumeUrl: user?.resumeUrl || '',
-      firstname: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.email || '',
+      selfAvatarUrl: user?.selfAvatarUrl || 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69',
+      coupleAvatarUrl: user?.coupleAvatarUrl || 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69',
+      selfFullName: user?.selfFullName || '',
+      coupleFullName: user?.coupleFullName || '',
+      dob: user?.dob || '',
       websiteStyle: user?.websiteStyle || '',
       bio: user?.bio || '',
-      experience: user?.experience|| '',
-      location: user?.location || '',
-      linkedin: user?.linkedin || '',
     },
     validate: {
-      firstname: (value) => value.trim().length < 2,
-      lastName: (value) => value.trim().length === 0,
-      email: (value) => !/^\S+@\S+$/.test(value),
+      selfFullName: (value) => value.trim().length < 2,
+      coupleFullName: (value) => value.trim().length < 2,
     },
   });
 
@@ -88,38 +90,41 @@ const WelcomePage = () => {
   }
   const handleSubmit = async (values) => {
     try {
-      const avatarUrl = await uploadAvatar();
-      const resumeUrl = await uploadResume();
+      const selfAvatarUrl = await uploadSelfAvatar();
+      const coupleAvatarUrl = await uploadCoupleAvatar();
       const userData = {
-        firstName: values.firstname,
-        lastName: values.lastName,
-        email: values.email,
+        selfAvatarUrl: selfAvatarUrl,
+        coupleAvatarUrl: coupleAvatarUrl,
+        selfFullName: values.selfFullName,
+        coupleFullName: values.coupleFullName,
+        dob: values.dob || '',
         websiteStyle: values.websiteStyle,
         bio: values.bio,
-        experience: values.experience,
-        location: values.location,
-        linkedin: values.linkedin,
-        avatarUrl: avatarUrl,
-        resumeUrl: resumeUrl,
       };
       // Dispatch an update action - replace with the actual thunk if different
       const action = updateUserThunk({uid: user._id, userData});
       const resultAction = await dispatch(action);
       const updatedUser = resultAction.payload;
-
       console.log('Update successful: ', updatedUser);
-      // Additional actions after successful update can go here
-      alert('You already successfully saved!');
+      navigate('/dashBoard/picture');
+      // alert('You already successfully saved!');
     } catch (error) {
       console.error('Update failed: ', error);
-      // Handle update error here
     }
   };
   return (
-    <Container size="md" style={{marginTop: '2rem', marginBottom: '2rem'}}>
-      <Modal opened={isViewerOpen}
-        onClose={() => setIsViewerOpen(false)} >
-        <img src={form.values.avatarUrl} alt="Avatar" style={{width: '100%'}}/>
+    <Container size="md" style={{marginTop: '1rem', marginBottom: '2rem'}}>
+      <Modal opened={SelfViewerOpen}
+        onClose={() => setSelfViewerOpen(false)} >
+        <img src={form.values.selfAvatarUrl}
+          alt="Avatar"
+          style={{width: '100%'}}/>
+      </Modal>
+      <Modal opened={CoupleViewerOpen}
+        onClose={() => setCoupleViewerOpen(false)} >
+        <img src={form.values.coupleAvatarUrl}
+          alt="Avatar"
+          style={{width: '100%'}}/>
       </Modal>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Title
@@ -129,62 +134,70 @@ const WelcomePage = () => {
           fw={900}
           ta="center"
         >
-          your information
+          basic information
         </Title>
 
         <Flex style={{marginTop: '1rem', gap: '1rem'}}>
           <Flex style={{flex: 1, alignItems: 'center', gap: '1rem'}}>
             <Avatar
-              src={form.values.avatarUrl}
+              src={form.values.selfAvatarUrl}
               size="lg"
               radius="sm"
               style={{cursor: 'pointer', height: '100%'}}
-              onClick={handleAvatarClick}
+              onClick={handleSelfAvatarClick}
             />
             <FileInput
               clearable
               variant="filled"
-              label="Change new photo"
+              label="upload your photo"
               placeholder=".jpg .Png are acceptable"
               accept="image/*"
-              onChange={handleAvatarChange}
+              onChange={handleSelfAvatarChange}
               style={{flex: 1}}
             />
           </Flex>
-          <FileInput
-            icon={<IconFileCv/>}
-            clearable
-            variant="filled"
-            label="Attach your CV"
-            placeholder="only .PDF acceptable"
-            accept=".pdf"
-            onChange={handleResumeChange}
-            style={{flex: 1}}
-          />
+          <Flex style={{flex: 1, alignItems: 'center', gap: '1rem'}}>
+            <Avatar
+              src={form.values.coupleAvatarUrl}
+              size="lg"
+              radius="sm"
+              style={{cursor: 'pointer', height: '100%'}}
+              onClick={handleCoupleAvatarClick}
+            />
+            <FileInput
+              clearable
+              variant="filled"
+              label="upload your couple photo"
+              placeholder=".jpg .Png are acceptable"
+              accept="image/*"
+              onChange={handleCoupleAvatarChange}
+              style={{flex: 1}}
+            />
+          </Flex>
         </Flex>
         <Flex style={{marginTop: '1rem', gap: '1rem'}}>
           <TextInput
-            label="FirstName"
-            name="firstname"
+            label="Self Full Name"
+            name="selfFullName"
             variant="filled"
-            {...form.getInputProps('firstname')}
+            {...form.getInputProps('selfFullName')}
             style={{flex: 1}}
           />
 
           <TextInput
-            label="LastName"
-            name="lastName"
+            label="Couple Full Name"
+            name="coupleFullName"
             variant="filled"
-            {...form.getInputProps('lastName')}
+            {...form.getInputProps('coupleFullName')}
             style={{flex: 1}}
           />
         </Flex>
         <Flex style={{marginTop: '1rem', gap: '1rem'}}>
           <TextInput
-            label="Email"
-            name="email"
+            label="Date of couple"
+            name="dob"
             variant="filled"
-            {...form.getInputProps('email')}
+            {...form.getInputProps('dob')}
             style={{flex: 1}}
           />
           <NativeSelect
@@ -198,35 +211,6 @@ const WelcomePage = () => {
             style={{flex: 1}}
           />
         </Flex>
-
-        <Flex style={{marginTop: '1rem', gap: '1rem'}}>
-          <NativeSelect
-            label="Experience"
-            name="experience"
-            variant="filled"
-            {...form.getInputProps('experience')}
-            data={
-              ['0-1 years', '1-3 years', '3-5 years', '5-10 years', '10+ years']
-            }
-            style={{flex: 1}}
-          />
-
-          <TextInput
-            label="Location"
-            name="location"
-            variant="filled"
-            {...form.getInputProps('location')}
-            style={{flex: 1}}
-          />
-        </Flex>
-        <TextInput
-          label="LinkedIn Profile URL"
-          icon={<IconBrandLinkedin/>}
-          mt="md"
-          name="linkedin"
-          variant="filled"
-          {...form.getInputProps('linkedin')}
-        />
 
         <Textarea
           mt="md"
@@ -242,7 +226,7 @@ const WelcomePage = () => {
 
         <Group justify="center" mt="xl">
           <Button type="submit" size="md">
-            Submit
+            Next
           </Button>
         </Group>
       </form>

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import {loginThunk} from '../../services/authorize-thunk';
-import keelworksLog from '../../icons/keelworksIcon.svg';
+import Logo from '../../icons/logo.jpg';
 import {
   Container,
   Paper,
@@ -71,7 +71,7 @@ function Login() {
       style={{justifyContent: 'center', alignItems: 'center'}}>
       <div style={{display: 'flex', justifyContent: 'center',
         marginBottom: '30px'}}>
-        <img src={keelworksLog} alt="Logo" style={{width: '70%'}} />
+        <img src={Logo} alt="Logo" style={{width: '70%'}} />
       </div>
 
       <Paper withBorder shadow="sm" p={40} my={30} radius="md">

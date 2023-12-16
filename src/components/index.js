@@ -1,24 +1,36 @@
 import React from 'react';
 import NavigationSidebar from './navigation/navigation';
+import StepperComponent from './profile/stepper';
 import {Routes, Route} from 'react-router';
 import ProfileComponent from './profile/profile';
+import PictureComponent from './profile/picture';
+import MusicComponent from './profile/music';
+import {Flex} from '@mantine/core';
 
 // eslint-disable-next-line require-jsdoc
 function dashBoard() {
   return (
-    <div className="container-fluid row" style={{marginTop: '0'}}>
-      <div className='col-3 col-md-2 col-lg-2 col-xl-2'
-        style={{padding: '0'}}>
-        <NavigationSidebar active='explore' />
+    <Flex style={{width: '100%'}}>
+      <div style={{padding: '0', flex: 1}}>
+        <NavigationSidebar/>
       </div>
-      <div className='col-9 col-md-10 col-lg-10 col-xl-10'
-        style={{position: 'relative'}}>
-        <Routes>
-          <Route path='/' element={<ProfileComponent />} />
-          <Route path='/profile' element={<ProfileComponent />} />
-        </Routes>
+
+      <div style={{flex: 6}}>
+        <Flex direction="column" style={{width: '100%'}}>
+          <div style={{padding: '0', flex: 1}}>
+            <StepperComponent/>
+          </div>
+          <div style={{flex: 6}}>
+            <Routes>
+              <Route path='/' element={<ProfileComponent />} />
+              <Route path='/profile' element={<ProfileComponent />} />
+              <Route path='/picture' element={<PictureComponent />} />
+              <Route path='/music' element={<MusicComponent />} />
+            </Routes>
+          </div>
+        </Flex>
       </div>
-    </div>
+    </Flex>
   );
 }
 
