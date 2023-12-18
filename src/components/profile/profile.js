@@ -24,6 +24,7 @@ const WelcomePage = () => {
   const [coupleAvatar, setCoupleAvatar] = useState(null);
   const [SelfViewerOpen, setSelfViewerOpen] = useState(false);
   const [CoupleViewerOpen, setCoupleViewerOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((state) => state.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -89,6 +90,7 @@ const WelcomePage = () => {
     );
   }
   const handleSubmit = async (values) => {
+    setIsLoading(true);
     try {
       const selfAvatarUrl = await uploadSelfAvatar();
       const coupleAvatarUrl = await uploadCoupleAvatar();
@@ -106,12 +108,15 @@ const WelcomePage = () => {
       const resultAction = await dispatch(action);
       const updatedUser = resultAction.payload;
       console.log('Update successful: ', updatedUser);
-      navigate('/dashBoard/picture');
+      navigate('/dashboard/picture');
       // alert('You already successfully saved!');
     } catch (error) {
       console.error('Update failed: ', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <Container size="md" style={{marginTop: '1rem', marginBottom: '2rem'}}>
       <Modal opened={SelfViewerOpen}
@@ -225,9 +230,11 @@ const WelcomePage = () => {
         />
 
         <Group justify="center" mt="xl">
-          <Button type="submit" size="md">
-            Next
-          </Button>
+          {isLoading ? (
+            <Button loading loaderProps={{type: 'dots'}}>Loading...</Button>
+          ) : (
+            <Button type="submit" size="md">Next</Button>
+          )}
         </Group>
       </form>
     </Container>
