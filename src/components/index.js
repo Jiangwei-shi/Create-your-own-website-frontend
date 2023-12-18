@@ -14,13 +14,12 @@ function dashBoard() {
       <div style={{padding: '0', flex: 1}}>
         <NavigationSidebar/>
       </div>
-
-      <div style={{flex: 6}}>
+      <div style={{flex: 5}}>
         <Flex direction="column" style={{width: '100%'}}>
           <div style={{padding: '0', flex: 1}}>
             <StepperComponent/>
           </div>
-          <div style={{flex: 6}}>
+          <div style={{flex: 5}}>
             <Routes>
               <Route path='/' element={<ProfileComponent />} />
               <Route path='/profile' element={<ProfileComponent />} />

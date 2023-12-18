@@ -1,6 +1,8 @@
 import {useState, useEffect} from 'react';
 import {Container, rem, Stepper} from '@mantine/core';
 import {useLocation, useNavigate} from 'react-router-dom';
+import {useSelector, useDispatch} from 'react-redux';
+import {resetMusicUploadState} from '../../reducers/authorize-reducer';
 import {
   IconCircleCheck,
   IconPhoto, IconMusic,
@@ -11,8 +13,26 @@ const StepperComponent = () => {
   const [active, setActive] = useState(1);
   const location = useLocation();
   const navigate = useNavigate();
+  const isMusicUploaded =
+    useSelector((state) => state.currentUser.isMusicUploaded);
+  console.log('isMusicUploaded1111111111111', isMusicUploaded);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    // ...现有的 useEffect 逻辑...
+    // 在适当的时机重置音乐上传状态
+    if (location.pathname !== '/dashboard/music' && isMusicUploaded) {
+      dispatch(resetMusicUploadState());
+    } else {
+      setActive(3);
+      dispatch(resetMusicUploadState());
+    }
+  }, [location, isMusicUploaded, dispatch]);
+
+  useEffect(() => {
+    if (isMusicUploaded) {
+      setActive(3);
+    }
     switch (location.pathname) {
       case '/dashboard/profile':
         setActive(0);
@@ -42,6 +62,7 @@ const StepperComponent = () => {
         navigate('/dashboard/music');
         break;
       default:
+        navigate('/dashboard/profile');
         break;
     }
   };
@@ -71,6 +92,9 @@ const StepperComponent = () => {
           label="Step 3"
           description="check website"
         />
+        <Stepper.Completed>
+          {''}
+        </Stepper.Completed>
       </Stepper>
     </Container>
   );

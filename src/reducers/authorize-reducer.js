@@ -7,8 +7,14 @@ import {
 
 const authorizeSlice = createSlice({
   name: 'authorize',
-  initialState: null,
-  reducers: {},
+  initialState: {
+    isMusicUploaded: false,
+  },
+  reducers: {
+    resetMusicUploadState(state) {
+      state.isMusicUploaded = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
         .addCase(loginThunk.fulfilled, (state, action) => {
@@ -29,11 +35,11 @@ const authorizeSlice = createSlice({
           return null;
         })
         .addCase(deleteUserThunk.rejected, (state, action) => {
-        // Handle error here
           console.error('Delete user failed:', action.error);
         })
         .addCase(updateUserThunk.fulfilled, (state, action) => {
-          return {...state, ...action.payload, loading: false};
+          // eslint-disable-next-line max-len
+          return {...state, ...action.payload, loading: false, isMusicUploaded: true};
         })
         .addCase(updateUserThunk.pending, (state) => {
           return {...state, loading: true};
@@ -44,5 +50,5 @@ const authorizeSlice = createSlice({
     ;
   },
 });
-
+export const {resetMusicUploadState} = authorizeSlice.actions;
 export default authorizeSlice.reducer;
