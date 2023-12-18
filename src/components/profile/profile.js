@@ -118,7 +118,7 @@ const WelcomePage = () => {
   };
 
   return (
-    <Container size="md" style={{marginTop: '1rem', marginBottom: '2rem'}}>
+    <Container size="md" style={{marginTop: '2rem', marginBottom: '2rem'}}>
       <Modal opened={SelfViewerOpen}
         onClose={() => setSelfViewerOpen(false)} >
         <img src={form.values.selfAvatarUrl}
@@ -132,12 +132,8 @@ const WelcomePage = () => {
           style={{width: '100%'}}/>
       </Modal>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Title
-          order={2}
-          size="h1"
-          style={{fontFamily: 'Greycliff CF, var(--mantine-font-family)'}}
-          fw={900}
-          ta="center"
+        {/* eslint-disable-next-line max-len */}
+        <Title order={2} size="h1" style={{fontFamily: 'Greycliff CF, var(--mantine-font-family)'}} fw={900} ta="center"
         >
           basic information
         </Title>

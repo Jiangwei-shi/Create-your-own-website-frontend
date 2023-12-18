@@ -5,11 +5,13 @@ import {
   registerThunk, updateUserThunk,
 } from '../services/authorize-thunk';
 
+const initialAuthState = {
+  isMusicUploaded: false,
+};
+
 const authorizeSlice = createSlice({
   name: 'authorize',
-  initialState: {
-    isMusicUploaded: false,
-  },
+  initialState: initialAuthState,
   reducers: {
     resetMusicUploadState(state) {
       state.isMusicUploaded = false;
@@ -24,7 +26,9 @@ const authorizeSlice = createSlice({
           return {error: action.payload};
         })
         .addCase(logoutThunk.fulfilled, (state) => {
-          return null;
+          return {
+            ...initialAuthState,
+          };
         })
         .addCase(registerThunk.fulfilled, (state, {payload}) => {
         })

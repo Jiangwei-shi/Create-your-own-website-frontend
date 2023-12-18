@@ -33,11 +33,11 @@ function styleOne() {
         <div className="heart bottom"></div>
       </div>
 
-      <b className="word">每次遇见绮绮都心跳加速!</b>
+      <b className="word">每次遇见{user.coupleFullName}都心跳加速!</b>
 
       <audio autoPlay loop id="audios" preload="auto">
         <source
-          src=" "/>
+          src={user.BackgroundMusic}/>
       </audio>
 
       {/* 在这里添加其他 JavaScript 或 Canvas 代码 */}

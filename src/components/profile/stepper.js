@@ -15,7 +15,6 @@ const StepperComponent = () => {
   const navigate = useNavigate();
   const isMusicUploaded =
     useSelector((state) => state.currentUser.isMusicUploaded);
-  console.log('isMusicUploaded1111111111111', isMusicUploaded);
   const dispatch = useDispatch();
 
   useEffect(() => {
