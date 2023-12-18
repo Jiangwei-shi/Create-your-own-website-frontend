@@ -33,13 +33,13 @@ const authorizeSlice = createSlice({
           console.error('Delete user failed:', action.error);
         })
         .addCase(updateUserThunk.fulfilled, (state, action) => {
-          // Update the state with the new user data
-          // Assuming the payload contains the updated user information
-          return action.payload;
+          return {...state, ...action.payload, loading: false};
+        })
+        .addCase(updateUserThunk.pending, (state) => {
+          return {...state, loading: true};
         })
         .addCase(updateUserThunk.rejected, (state, action) => {
-        // Optionally update state to indicate error
-          return {...state, error: action.payload};
+          return {...state, error: action.payload, loading: false};
         })
     ;
   },

@@ -1,14 +1,16 @@
 import {useState, useEffect} from 'react';
 import {Container, rem, Stepper} from '@mantine/core';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {
   IconCircleCheck,
-  IconPhoto, IconShieldCheck,
+  IconPhoto, IconMusic,
   IconUserCheck,
 } from '@tabler/icons-react';
+
 const StepperComponent = () => {
   const [active, setActive] = useState(1);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     switch (location.pathname) {
@@ -18,20 +20,39 @@ const StepperComponent = () => {
       case '/dashboard/picture':
         setActive(1);
         break;
+      case '/dashboard/music':
+        setActive(2);
+        break;
       default:
         setActive(0);
         break;
     }
   }, [location]);
 
+  const handleStepClick = (step) => {
+    setActive(step);
+    switch (step) {
+      case 0:
+        navigate('/dashboard/profile');
+        break;
+      case 1:
+        navigate('/dashboard/picture');
+        break;
+      case 2:
+        navigate('/dashboard/music');
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <Container size="md" style={{marginTop: '2rem'}}>
-      {/* eslint-disable-next-line max-len */}
       <Stepper
         active={active}
-        onStepClick={setActive}
+        onStepClick={handleStepClick}
         allowNextStepsSelect={false}
+
         completedIcon={<IconCircleCheck
           style={{width: rem(18), height: rem(18)}} />}
       >
@@ -41,13 +62,12 @@ const StepperComponent = () => {
           description="your information"
         />
         <Stepper.Step
-          icon={<IconPhoto
-            style={{width: rem(18), height: rem(18)}} />}
+          icon={<IconPhoto style={{width: rem(18), height: rem(18)}} />}
           label="Step 2"
           description="add background"
         />
         <Stepper.Step
-          icon={<IconShieldCheck style={{width: rem(18), height: rem(18)}} />}
+          icon={<IconMusic style={{width: rem(18), height: rem(18)}} />}
           label="Step 3"
           description="check website"
         />
@@ -57,3 +77,4 @@ const StepperComponent = () => {
 };
 
 export default StepperComponent;
+

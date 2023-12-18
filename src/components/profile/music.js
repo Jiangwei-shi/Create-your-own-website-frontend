@@ -11,6 +11,8 @@ import {updateUserThunk} from '../../services/authorize-thunk';
 
 const MusicPage = () => {
   const [Music, setMusic] = useState(null);
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.currentUser);
@@ -49,6 +51,7 @@ const MusicPage = () => {
   });
 
   const handleSubmit = async (values) => {
+    setIsLoading(true);
     try {
       // eslint-disable-next-line max-len
       const MusicUrls = await uploadBackgroundMusic();
@@ -60,12 +63,19 @@ const MusicPage = () => {
       const resultAction = await dispatch(action);
       const updatedUser = resultAction.payload;
       console.log('Update successful: ', updatedUser);
-      navigate(`/user/${user._id}/${user.websiteStyle}`);
+      setIsButtonVisible(true);
     } catch (error) {
       console.error('Update failed: ', error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  const prevStep = () => {
+    navigate('/dashboard/picture');
+  };
+  const lookWebsite = () => {
+    navigate(`/user/${user._id}/${user.websiteStyle}`);
+  };
 
   return (
     <Container size="md" style={{marginTop: '2rem', marginBottom: '2rem'}}>
@@ -90,9 +100,19 @@ const MusicPage = () => {
       <form onSubmit={form.onSubmit(handleSubmit)}>
 
         <Group justify="center" mt="xl">
-          <Button type="submit" size="md">
-            look my webSite
+          <Button variant="default" onClick={prevStep}>
+            Back
           </Button>
+          {isLoading ? (
+            <Button loading loaderProps={{type: 'dots'}}>Loading...</Button>
+          ) : (
+            <Button type="submit" size="md">submit</Button>
+          )}
+          {isButtonVisible && (
+            <Button size="md" style={{marginTop: '10px'}} onClick={lookWebsite}>
+              Look at my website
+            </Button>
+          )}
         </Group>
       </form>
     </Container>

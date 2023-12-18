@@ -11,6 +11,7 @@ import {updateUserThunk} from '../../services/authorize-thunk';
 
 const PicturePage = () => {
   const [StylePhotoList, setStylePhotoList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.currentUser);
@@ -52,6 +53,7 @@ const PicturePage = () => {
   });
 
   const handleSubmit = async (values) => {
+    setIsLoading(true);
     try {
       // eslint-disable-next-line max-len
       const avatarUrls = await Promise.all(StylePhotoList.map((StylePhoto) => uploadStylePhoto(StylePhoto)));
@@ -63,10 +65,16 @@ const PicturePage = () => {
       const resultAction = await dispatch(action);
       const updatedUser = resultAction.payload;
       console.log('Update successful: ', updatedUser);
-      navigate('/dashBoard/music');
+      navigate('/dashboard/music');
     } catch (error) {
       console.error('Update failed: ', error);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const prevStep = () => {
+    navigate('/dashboard/profile');
   };
 
   const handleNumberOfPicture = (style) => {
@@ -156,9 +164,14 @@ const PicturePage = () => {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         {renderAvatarInputs()}
         <Group justify="center" mt="xl">
-          <Button type="submit" size="md">
-            Next
+          <Button variant="default" onClick={prevStep}>
+            Back
           </Button>
+          {isLoading ? (
+            <Button loading loaderProps={{type: 'dots'}}>Loading...</Button>
+          ) : (
+            <Button type="submit" size="md">Next</Button>
+          )}
         </Group>
       </form>
     </Container>
