@@ -16,49 +16,32 @@ const MusicPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.currentUser);
+
   const handleMusicChange = (e) => {
     setMusic(e);
   };
 
-  if (!user) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-      }}>
-        <Text align="center" size="xl">
-          Welcome, Guest!
-        </Text>
-      </div>
-    );
-  }
+  const form = useForm({
+    initialValues: {
+      BackgroundMusic: user?.BackgroundMusic || 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/music%2F%E7%88%B1%E5%A6%82%E7%81%AB.mp3?alt=media&token=816b35c4-453c-4396-a4c3-aab3c990e4b3',
+    },
+  });
 
   const uploadBackgroundMusic = async () => {
-    if (!Music) return user.BackgroundMusic;
+    if (!Music) return form.values.BackgroundMusic;
     const storage = getStorage(firebase);
     const storageRef = ref(storage, 'music/' + Music.name);
     await uploadBytes(storageRef, Music);
     return getDownloadURL(storageRef);
   };
 
-
-  const form = useForm({
-    initialValues: {
-      BackgroundMusic: user?.BackgroundMusic || '',
-    },
-  });
-
   const handleSubmit = async (values) => {
     setIsLoading(true);
     try {
-      // eslint-disable-next-line max-len
       const MusicUrls = await uploadBackgroundMusic();
       const userData = {
         BackgroundMusic: MusicUrls,
       };
-      // Dispatch an update action
       const action = updateUserThunk({uid: user._id, userData});
       const resultAction = await dispatch(action);
       const updatedUser = resultAction.payload;
@@ -76,6 +59,21 @@ const MusicPage = () => {
   const lookWebsite = () => {
     navigate(`/user/${user._id}/${user.websiteStyle}`);
   };
+
+  if (!user) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}>
+        <Text align="center" size="xl">
+          Welcome, Guest!
+        </Text>
+      </div>
+    );
+  }
 
   return (
     <Container size="md" style={{marginTop: '2rem', marginBottom: '2rem'}}>
@@ -100,7 +98,7 @@ const MusicPage = () => {
       <form onSubmit={form.onSubmit(handleSubmit)}>
 
         <Group justify="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
+          <Button variant="default" size="md" onClick={prevStep}>
             Back
           </Button>
           {isLoading ? (
@@ -109,7 +107,7 @@ const MusicPage = () => {
             <Button type="submit" size="md">submit</Button>
           )}
           {isButtonVisible && (
-            <Button size="md" style={{marginTop: '10px'}} onClick={lookWebsite}>
+            <Button size="md" onClick={lookWebsite}>
               Look at my website
             </Button>
           )}
