@@ -43,7 +43,7 @@ const WelcomePage = () => {
   };
 
   const uploadSelfAvatar = async () => {
-    if (!selfAvatar) return user.selfAvatarUrl;
+    if (!selfAvatar) return form.values.selfAvatarUrl;
     const storage = getStorage(firebase);
     const storageRef = ref(storage, 'avatars/' + selfAvatar.name);
     await uploadBytes(storageRef, selfAvatar);
@@ -52,7 +52,7 @@ const WelcomePage = () => {
 
 
   const uploadCoupleAvatar = async () => {
-    if (!coupleAvatar) return user.coupleAvatarUrl;
+    if (!coupleAvatar) return form.values.coupleAvatarUrl;
     const storage = getStorage(firebase);
     const storageRef = ref(storage, 'avatars/' + coupleAvatar.name);
     await uploadBytes(storageRef, coupleAvatar);
@@ -63,11 +63,11 @@ const WelcomePage = () => {
     initialValues: {
       selfAvatarUrl: user?.selfAvatarUrl || 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69',
       coupleAvatarUrl: user?.coupleAvatarUrl || 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69',
-      selfFullName: user?.selfFullName || '',
-      coupleFullName: user?.coupleFullName || '',
-      dob: user?.dob || '',
+      selfFullName: user?.selfFullName || 'your name',
+      coupleFullName: user?.coupleFullName || 'couple name',
+      dob: user?.dob || '2000/01/01',
       websiteStyle: user?.websiteStyle || '',
-      bio: user?.bio || '',
+      bio: user?.bio || 'Say hi',
     },
     validate: {
       selfFullName: (value) => value.trim().length < 2,

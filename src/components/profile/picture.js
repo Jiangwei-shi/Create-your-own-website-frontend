@@ -14,8 +14,16 @@ const PicturePage = () => {
   const user = useSelector((state) => state.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [stylePhotoList, setStylePhotoList] = useState([]);
-  const [StyleTextList, setStyleTextList] = useState(user.styleOneText);
+  const form = useForm({
+    initialValues: {
+      styleOnePhotos: (user?.styleOnePhotos && user.styleOnePhotos.length > 0) ? user.styleOnePhotos : ['https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69'],
+      styleOneText: (user?.styleOneText && user.styleOneText.length > 0) ?
+        user.styleOneText : ['111', '222', '333'],
+    },
+  });
+  const [stylePhotoList, setStylePhotoList] =
+    useState(form.values.styleOnePhotos);
+  const [StyleTextList, setStyleTextList] = useState(form.values.styleOneText);
   const [isLoading, setIsLoading] = useState(false);
 
   if (!user) {
@@ -45,27 +53,30 @@ const PicturePage = () => {
     newStyleText[index] = newText;
     setStyleTextList(newStyleText);
   };
-  const uploadStylePhoto = async (StylePhoto) => {
-    if (!StylePhoto) return 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69';
-    const storage = getStorage(firebase);
-    const storageRef = ref(storage, 'stylePhoto/' + StylePhoto.name);
-    await uploadBytes(storageRef, StylePhoto);
-    return await getDownloadURL(storageRef);
+  const uploadStylePhoto = async (StylePhoto, index) => {
+    if (!StylePhoto) return form.values.styleOnePhotos;
+    if (StylePhoto===form.values.styleOnePhotos[index]) {
+      return form.values.styleOnePhotos[index];
+    }
+    try {
+      const storage = getStorage(firebase);
+      const storageRef = ref(storage, 'stylePhoto/' + StylePhoto.name);
+      await uploadBytes(storageRef, StylePhoto);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      return downloadURL;
+    } catch (error) {
+      console.error('Error in file upload:', error);
+      return null; // 或根据需求返回适当的值或处理错误
+    }
   };
 
-
-  const form = useForm({
-    initialValues: {
-      styleOnePhotos: user?.styleOnePhotos || [],
-      styleOneText: user?.styleOneText || [],
-    },
-  });
-
-  const handleSubmit = async (values) => {
+  const handleSubmit = async () => {
     setIsLoading(true);
     try {
       // eslint-disable-next-line max-len
-      const avatarUrls = await Promise.all(stylePhotoList.map((StylePhoto) => uploadStylePhoto(StylePhoto)));
+      const avatarUrls = await Promise.all(stylePhotoList.map((StylePhoto, index) => uploadStylePhoto(StylePhoto, index)));
+      console.log(avatarUrls);
       const userData = {
         styleOnePhotos: avatarUrls.filter((url) => url !== undefined),
         styleOneText: StyleTextList,
@@ -102,13 +113,13 @@ const PicturePage = () => {
     if (numberOfPictures === 0) {
       return <Text>This style does not require any pictures.</Text>;
     }
-    let stylePhotoList;
+    let photoList;
     switch (user.websiteStyle) {
       case 'style 1':
-        stylePhotoList = form.values.styleOnePhotos;
+        photoList = form.values.styleOnePhotos;
         break;
       case 'style 2':
-        stylePhotoList = form.values.styleTwoPhotos;
+        photoList = form.values.styleTwoPhotos;
         break;
     }
 
@@ -118,7 +129,7 @@ const PicturePage = () => {
           <Flex key={i} style={{marginTop: '1rem', gap: '1rem'}}>
             <Flex style={{flex: 1, alignItems: 'center', gap: '1rem'}}>
               <Avatar
-                src={stylePhotoList[i] || 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69'}
+                src={photoList[i]}
                 size="lg"
                 radius="sm"
                 style={{cursor: 'pointer', height: '100%'}}
@@ -139,7 +150,7 @@ const PicturePage = () => {
               label={`Describe photo ${i + 1}`}
               variant="filled"
               onChange={(e) => handleStyleTextChange(i, e)}
-              value={StyleTextList[i] || ''} // 使用 StyleTextList 中的值
+              value={StyleTextList[i] || ''}
               style={{flex: 1}}
             />
           </Flex>,
