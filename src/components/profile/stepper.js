@@ -14,24 +14,17 @@ const StepperComponent = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isMusicUploaded =
-    useSelector((state) => state.currentUser.isMusicUploaded);
+    useSelector((state) => state?.currentUser?.isMusicUploaded) || false;
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // ...现有的 useEffect 逻辑...
-    // 在适当的时机重置音乐上传状态
-    if (location.pathname !== '/dashboard/music' && isMusicUploaded) {
-      dispatch(resetMusicUploadState());
-    } else {
+    if (location.pathname === '/dashboard/music' && isMusicUploaded) {
       setActive(3);
-      dispatch(resetMusicUploadState());
     }
+    dispatch(resetMusicUploadState());
   }, [location, isMusicUploaded, dispatch]);
 
   useEffect(() => {
-    if (isMusicUploaded) {
-      setActive(3);
-    }
     switch (location.pathname) {
       case '/dashboard/profile':
         setActive(0);
