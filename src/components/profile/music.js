@@ -100,7 +100,7 @@ const MusicPage = () => {
       <form onSubmit={form.onSubmit(handleSubmit)}>
 
         <Group justify="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
+          <Button variant="default" size="md" onClick={prevStep}>
             Back
           </Button>
           {isLoading ? (
@@ -109,7 +109,7 @@ const MusicPage = () => {
             <Button type="submit" size="md">submit</Button>
           )}
           {isButtonVisible && (
-            <Button size="md" style={{marginTop: '10px'}} onClick={lookWebsite}>
+            <Button size="md" onClick={lookWebsite}>
               Look at my website
             </Button>
           )}
