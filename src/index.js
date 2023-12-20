@@ -13,7 +13,7 @@ import Login from './components/authorize/login';
 import Signup from './components/authorize/signup';
 import DashBoard from './components/index';
 import StyleOne from './components/pages/styleOne';
-import StyleTwo from './components/pages/styleTwo';
+import StyleTwo from './components/pages/page2/styleTwo';
 import FourZeroFourPage from './components/FourZeroFourPage';
 import reportWebVitals from './reportWebVitals';
 

@@ -84,9 +84,9 @@ const PicturePage = () => {
     setStyleTextList(newStyleText);
   };
   const uploadStylePhoto = async (StylePhoto, index) => {
-    if (!StylePhoto) return form.values.styleOnePhotos;
-    if (StylePhoto===form.values.styleOnePhotos[index]) {
-      return form.values.styleOnePhotos[index];
+    if (!StylePhoto) return stylePhotoList[index];
+    if (StylePhoto===stylePhotoList[index]) {
+      return stylePhotoList[index];
     }
     try {
       const storage = getStorage(firebase);
