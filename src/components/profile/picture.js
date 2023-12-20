@@ -5,8 +5,15 @@ import {useForm} from '@mantine/form';
 import {getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage';
 import firebase from '../../firebaseConfig';
 import {
-  Avatar, Button, Container, FileInput,
-  Group, Title, Text, TextInput, Flex,
+  Avatar,
+  Button,
+  Container,
+  FileInput,
+  Flex,
+  Group,
+  Text,
+  TextInput,
+  Title,
 } from '@mantine/core';
 import {updateUserThunk} from '../../services/authorize-thunk';
 
@@ -19,11 +26,33 @@ const PicturePage = () => {
       styleOnePhotos: (user?.styleOnePhotos && user.styleOnePhotos.length > 0) ? user.styleOnePhotos : ['https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69'],
       styleOneText: (user?.styleOneText && user.styleOneText.length > 0) ?
         user.styleOneText : ['111', '222', '333'],
+      styleTwoPhoto: (user?.styleOnePhotos && user.styleOnePhotos.length > 0) ? user.styleOnePhotos : ['https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69'],
+      styleTwoText: (user?.styleOneText && user.styleOneText.length > 0) ?
+        user.styleOneText : ['111', '222', '333'],
     },
   });
-  const [stylePhotoList, setStylePhotoList] =
-    useState(form.values.styleOnePhotos);
-  const [StyleTextList, setStyleTextList] = useState(form.values.styleOneText);
+
+  const [stylePhotoList, setStylePhotoList] = useState(() => {
+    switch (user.websiteStyle) {
+      case 'style 1':
+        return form.values.styleOnePhotos;
+      case 'style 2':
+        return form.values.styleTwoPhoto;
+      default:
+        return [];
+    }
+  });
+  const [StyleTextList, setStyleTextList] = useState(() => {
+    switch (user.websiteStyle) {
+      case 'style 1':
+        return form.values.styleOneText;
+      case 'style 2':
+        return form.values.styleTwoText;
+      default:
+        return [];
+    }
+  });
+
   const [isLoading, setIsLoading] = useState(false);
 
   if (!user) {
@@ -62,9 +91,7 @@ const PicturePage = () => {
       const storage = getStorage(firebase);
       const storageRef = ref(storage, 'stylePhoto/' + StylePhoto.name);
       await uploadBytes(storageRef, StylePhoto);
-      const downloadURL = await getDownloadURL(storageRef);
-
-      return downloadURL;
+      return await getDownloadURL(storageRef);
     } catch (error) {
       console.error('Error in file upload:', error);
       return null; // 或根据需求返回适当的值或处理错误
@@ -76,10 +103,11 @@ const PicturePage = () => {
     try {
       // eslint-disable-next-line max-len
       const avatarUrls = await Promise.all(stylePhotoList.map((StylePhoto, index) => uploadStylePhoto(StylePhoto, index)));
-      console.log(avatarUrls);
       const userData = {
         styleOnePhotos: avatarUrls.filter((url) => url !== undefined),
         styleOneText: StyleTextList,
+        styleTwoPhoto: avatarUrls.filter((url) => url !== undefined),
+        styleTwoText: StyleTextList,
       };
       // Dispatch an update action
       const action = updateUserThunk({uid: user._id, userData});
@@ -113,15 +141,6 @@ const PicturePage = () => {
     if (numberOfPictures === 0) {
       return <Text>This style does not require any pictures.</Text>;
     }
-    let photoList;
-    switch (user.websiteStyle) {
-      case 'style 1':
-        photoList = form.values.styleOnePhotos;
-        break;
-      case 'style 2':
-        photoList = form.values.styleTwoPhotos;
-        break;
-    }
 
     const rows = [];
     for (let i = 0; i < numberOfPictures; i++) {
@@ -129,7 +148,7 @@ const PicturePage = () => {
           <Flex key={i} style={{marginTop: '1rem', gap: '1rem'}}>
             <Flex style={{flex: 1, alignItems: 'center', gap: '1rem'}}>
               <Avatar
-                src={photoList[i]}
+                src={stylePhotoList[i]}
                 size="lg"
                 radius="sm"
                 style={{cursor: 'pointer', height: '100%'}}
