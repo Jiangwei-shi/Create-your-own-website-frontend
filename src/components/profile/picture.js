@@ -5,8 +5,15 @@ import {useForm} from '@mantine/form';
 import {getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage';
 import firebase from '../../firebaseConfig';
 import {
-  Avatar, Button, Container, FileInput,
-  Group, Title, Text, TextInput, Flex,
+  Avatar,
+  Button,
+  Container,
+  FileInput,
+  Flex,
+  Group,
+  Text,
+  TextInput,
+  Title,
 } from '@mantine/core';
 import {updateUserThunk} from '../../services/authorize-thunk';
 
@@ -19,11 +26,34 @@ const PicturePage = () => {
       styleOnePhotos: (user?.styleOnePhotos && user.styleOnePhotos.length > 0) ? user.styleOnePhotos : ['https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69', 'https://firebasestorage.googleapis.com/v0/b/portfolio-generator-394004.appspot.com/o/avatars%2Fcxk.jpg?alt=media&token=29c9ba5e-ea2a-4c76-9e15-4ba58ff13c69'],
       styleOneText: (user?.styleOneText && user.styleOneText.length > 0) ?
         user.styleOneText : ['111', '222', '333'],
+      styleTwoPhoto: (user?.styleOnePhotos && user.styleOnePhotos.length > 0) ? user.styleOnePhotos : ['https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample1.jpeg?alt=media&token=782b6614-0be4-451a-afa5-b6b37fc6e702', 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample2.jpeg?alt=media&token=9988571a-10bf-4799-a64e-f415adfeec38', 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample3.jpeg?alt=media&token=ccbbfc44-88e1-4717-840f-b315c0eca747', 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample4.jpeg?alt=media&token=f8e45b8f-4f20-4826-ba7a-977d854e7234', 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample5.jpeg?alt=media&token=0f934fd4-8267-41f4-bd7e-cc6bbe6f2ff2', 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample6.jpeg?alt=media&token=7e49c37e-52e9-47dd-b282-744c01e650e4', 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample7.jpeg?alt=media&token=daac4fb8-6637-44d6-aacf-364289aba5e9', 'https://firebasestorage.googleapis.com/v0/b/create-your-own-website-ebf54.appspot.com/o/stylePhoto%2FstyleTwoexample8.jpeg?alt=media&token=2e28ae25-7aae-4503-b72a-5e5eb36d1535'],
+      styleTwoText: (user?.styleOneText && user.styleOneText.length > 0) ?
+        // eslint-disable-next-line max-len
+        user.styleOneText : ['I LOVE YOU', '这就是我们的爱情故事', '同一个愿望,相爱.我爱你,至死不渝', '我们的相遇是意外的，但这是一个美丽幸福的意外，让我遇到了这么好的你', '莎士比亚说过：爱情是一种甜蜜的痛苦，但是我愿意忍受这种痛苦，莎士比亚还说过，世界上没有比服侍爱情更快乐的了，你愿不愿意享受这种快乐？当然你是愿意的~嘿嘿', '这并不是说长，它肯定是不是你在电影这几天看到的那种吻，但它妙在以自己的方式，和所有我能记得的时刻是，当我们的嘴唇感动，我知道记忆会永远持续下去', '多庆幸世界那么大能和你相恋， 好骄傲你是爱我的，就那么一个你我真的很珍惜， 所有...所有的一切我只想用一句英文告诉你， You are the apple of my eyes', '执子之手,与子携老'],
     },
   });
-  const [stylePhotoList, setStylePhotoList] =
-    useState(form.values.styleOnePhotos);
-  const [StyleTextList, setStyleTextList] = useState(form.values.styleOneText);
+
+  const [stylePhotoList, setStylePhotoList] = useState(() => {
+    switch (user.websiteStyle) {
+      case 'style 1':
+        return form.values.styleOnePhotos;
+      case 'style 2':
+        return form.values.styleTwoPhoto;
+      default:
+        return [];
+    }
+  });
+  const [StyleTextList, setStyleTextList] = useState(() => {
+    switch (user.websiteStyle) {
+      case 'style 1':
+        return form.values.styleOneText;
+      case 'style 2':
+        return form.values.styleTwoText;
+      default:
+        return [];
+    }
+  });
+
   const [isLoading, setIsLoading] = useState(false);
 
   if (!user) {
@@ -54,17 +84,15 @@ const PicturePage = () => {
     setStyleTextList(newStyleText);
   };
   const uploadStylePhoto = async (StylePhoto, index) => {
-    if (!StylePhoto) return form.values.styleOnePhotos;
-    if (StylePhoto===form.values.styleOnePhotos[index]) {
-      return form.values.styleOnePhotos[index];
+    if (!StylePhoto) return stylePhotoList[index];
+    if (StylePhoto===stylePhotoList[index]) {
+      return stylePhotoList[index];
     }
     try {
       const storage = getStorage(firebase);
       const storageRef = ref(storage, 'stylePhoto/' + StylePhoto.name);
       await uploadBytes(storageRef, StylePhoto);
-      const downloadURL = await getDownloadURL(storageRef);
-
-      return downloadURL;
+      return await getDownloadURL(storageRef);
     } catch (error) {
       console.error('Error in file upload:', error);
       return null; // 或根据需求返回适当的值或处理错误
@@ -76,11 +104,25 @@ const PicturePage = () => {
     try {
       // eslint-disable-next-line max-len
       const avatarUrls = await Promise.all(stylePhotoList.map((StylePhoto, index) => uploadStylePhoto(StylePhoto, index)));
-      console.log(avatarUrls);
-      const userData = {
-        styleOnePhotos: avatarUrls.filter((url) => url !== undefined),
-        styleOneText: StyleTextList,
-      };
+      let userData;
+      switch (user.websiteStyle) {
+        case 'style 1':
+          userData = {
+            styleOnePhotos: avatarUrls.filter((url) => url !== undefined),
+            styleOneText: StyleTextList,
+          };
+          break;
+        case 'style 2':
+          userData = {
+            styleTwoPhoto: avatarUrls.filter((url) => url !== undefined),
+            styleTwoText: StyleTextList,
+          };
+          break;
+        // Optionally, you can add a default case if needed
+        default:
+          // Default case logic here
+          break;
+      }
       // Dispatch an update action
       const action = updateUserThunk({uid: user._id, userData});
       const resultAction = await dispatch(action);
@@ -102,7 +144,7 @@ const PicturePage = () => {
     if (style === 'style 1') {
       return 3;
     } else if (style === 'style 2') {
-      return 1;
+      return 8;
     } else {
       return 3;
     }
@@ -113,15 +155,6 @@ const PicturePage = () => {
     if (numberOfPictures === 0) {
       return <Text>This style does not require any pictures.</Text>;
     }
-    let photoList;
-    switch (user.websiteStyle) {
-      case 'style 1':
-        photoList = form.values.styleOnePhotos;
-        break;
-      case 'style 2':
-        photoList = form.values.styleTwoPhotos;
-        break;
-    }
 
     const rows = [];
     for (let i = 0; i < numberOfPictures; i++) {
@@ -129,7 +162,7 @@ const PicturePage = () => {
           <Flex key={i} style={{marginTop: '1rem', gap: '1rem'}}>
             <Flex style={{flex: 1, alignItems: 'center', gap: '1rem'}}>
               <Avatar
-                src={photoList[i]}
+                src={stylePhotoList[i]}
                 size="lg"
                 radius="sm"
                 style={{cursor: 'pointer', height: '100%'}}
